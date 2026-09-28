@@ -1,3 +1,5 @@
+from collections import Counter
+
 import pandas as pd
 import pytest
 
@@ -24,3 +26,17 @@ def test_bad_json_is_skipped_with_warning():
     with pytest.warns(UserWarning):
         out = flatten_env_chunk(chunk)
     assert len(out) == 2
+
+
+def test_reading_missing_value_is_skipped_but_row_is_kept():
+    raw = (
+        '[{"values": [{"time": 1702273965, "value": 603}],'
+        ' "variable": {"name": "Carbon dioxide", "unit": "ppm"}},'
+        ' {"values": [{"time": 1702273965}],'
+        ' "variable": {"name": "Formaldehyde", "unit": "µg/m3"}}]'
+    )
+    problems = Counter()
+    chunk = pd.DataFrame({"sensorid": [1], "jsondata": [raw]})
+    out = flatten_env_chunk(chunk, problems)
+    assert list(out["variable"]) == ["Carbon dioxide"]
+    assert problems["reading missing time/value: Formaldehyde"] == 1
