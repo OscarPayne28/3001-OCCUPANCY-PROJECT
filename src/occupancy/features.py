@@ -52,3 +52,23 @@ def add_lag_features(
     for lag in lags:
         out[f"{value_col}_lag{lag}"] = out.groupby(group_col)[value_col].shift(lag)
     return out
+
+def add_closure_flag(df: pd.DataFrame, time_col: str = "time") -> pd.DataFrame:
+    """Flag rows likely to fall in the summer teaching closure.
+
+    This is an approximation (20 Dec to 10 Jan each year), not confirmed
+    closure dates, since none were provided with the dataset.
+
+    Args:
+        df: DataFrame with a timezone-aware timestamp column.
+        time_col: Name of that column.
+
+    Returns:
+        A copy of ``df`` with an added boolean column ``likely_closure``.
+    """
+    out = df.copy()
+    local = out[time_col].dt.tz_convert("Australia/Melbourne")
+    out["likely_closure"] = ((local.dt.month == 12) & (local.dt.day >= 20)) | (
+        (local.dt.month == 1) & (local.dt.day <= 10)
+    )
+    return out

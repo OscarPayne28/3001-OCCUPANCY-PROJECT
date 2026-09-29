@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from occupancy.features import add_time_features, add_lag_features
+from occupancy.features import add_time_features, add_lag_features, add_closure_flag
 
 
 def test_add_time_features_known_values():
@@ -26,3 +26,11 @@ def test_add_lag_features_shifts_within_group_only():
     assert out["value_lag1"].iloc[2] == 20
     assert pd.isna(out["value_lag1"].iloc[3])   # start of group B
     assert out["value_lag1"].iloc[4] == 100
+
+def test_add_closure_flag_marks_late_december():
+    df = pd.DataFrame({"time": pd.to_datetime(
+        ["2024-12-25 00:00:00", "2024-06-15 00:00:00"], utc=True
+    )})
+    out = add_closure_flag(df)
+    assert out["likely_closure"].iloc[0] == True
+    assert out["likely_closure"].iloc[1] == False
