@@ -34,3 +34,17 @@ def test_add_closure_flag_marks_late_december():
     out = add_closure_flag(df)
     assert out["likely_closure"].iloc[0] == True
     assert out["likely_closure"].iloc[1] == False
+
+from occupancy.features import build_features
+
+def test_build_features_returns_expected_columns():
+    times = pd.date_range("2024-01-01", periods=200, freq="15min", tz="UTC")
+    grid = pd.DataFrame({
+        "time": list(times) * 1,
+        "space": ["A"] * 200,
+        "headcount": [i % 5 for i in range(200)],
+    })
+    encoded, feature_cols = build_features(grid, lags=[1, 4])
+    assert "headcount_lag1" in feature_cols
+    assert "space_A" in feature_cols
+    assert encoded[feature_cols].isna().sum().sum() == 0

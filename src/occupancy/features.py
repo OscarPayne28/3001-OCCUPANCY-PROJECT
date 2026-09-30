@@ -72,3 +72,48 @@ def add_closure_flag(df: pd.DataFrame, time_col: str = "time") -> pd.DataFrame:
         (local.dt.month == 1) & (local.dt.day <= 10)
     )
     return out
+
+def build_features(
+    grid: pd.DataFrame,
+    lags: list[int],
+    roll_window: int = 4,
+) -> tuple[pd.DataFrame, list[str]]:
+    """Build the full model-ready feature table from a gridded occupancy series.
+
+    Applies time features, a closure flag, lag features, a rolling mean,
+    one-hot encodes ``space``, and drops rows with any missing feature
+    (e.g. the first lags*bin_width of each space's history).
+
+    Args:
+        grid: DataFrame with columns ``time`` (UTC, tz-aware), ``space``
+            (categorical label) and ``headcount``, one row per space per bin,
+            as produced by gridding each space with ``step_function_to_grid``.
+        lags: Lag lengths in rows to compute via ``add_lag_features``.
+        roll_window: Window size (in rows) for the rolling mean of headcount.
+
+    Returns:
+        A tuple of (encoded feature DataFrame, list of feature column names).
+        The returned DataFrame also retains ``time``, ``space`` and
+        ``headcount`` for downstream splitting and evaluation.
+
+    Raises:
+        KeyError: If ``grid`` is missing ``time``, ``space`` or ``headcount``.
+    """
+    df = grid.sort_values(["space", "time"]).copy()
+    df = add_time_features(df, time_col="time")
+    df = add_closure_flag(df, time_col="time")
+    df = add_lag_features(df, group_col="space", value_col="headcount", lags=lags)
+    df["roll_1hr"] = df.groupby("space")["headcount"].transform(
+        lambda s: s.rolling(roll_window, min_periods=1).mean()
+    )
+    df["occupied"] = df["headcount"] > 0
+    df = df.dropna()
+
+    encoded = pd.get_dummies(df, columns=["space"], prefix="space")
+    space_cols = [c for c in encoded.columns if c.startswith("space_")]
+    feature_cols = (
+        ["hour_sin", "hour_cos", "dow", "is_weekend", "likely_closure", "roll_1hr"]
+        + [f"headcount_lag{l}" for l in lags]
+        + space_cols
+    )
+    return encoded, feature_cols
