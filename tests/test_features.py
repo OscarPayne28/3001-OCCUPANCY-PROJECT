@@ -44,7 +44,7 @@ def test_build_features_returns_expected_columns():
         "space": ["A"] * 200,
         "headcount": [i % 5 for i in range(200)],
     })
-    encoded, feature_cols = build_features(grid, lags=[1, 4])
+    raw, encoded, feature_cols = build_features(grid, lags=[1, 4])
     assert "headcount_lag1" in feature_cols
     assert "space_A" in feature_cols
     assert encoded[feature_cols].isna().sum().sum() == 0

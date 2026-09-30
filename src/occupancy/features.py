@@ -77,7 +77,7 @@ def build_features(
     grid: pd.DataFrame,
     lags: list[int],
     roll_window: int = 4,
-) -> tuple[pd.DataFrame, list[str]]:
+) -> tuple[pd.DataFrame, pd.DataFrame, list[str]]:
     """Build the full model-ready feature table from a gridded occupancy series.
 
     Applies time features, a closure flag, lag features, a rolling mean,
@@ -92,9 +92,10 @@ def build_features(
         roll_window: Window size (in rows) for the rolling mean of headcount.
 
     Returns:
-        A tuple of (encoded feature DataFrame, list of feature column names).
-        The returned DataFrame also retains ``time``, ``space`` and
-        ``headcount`` for downstream splitting and evaluation.
+        A tuple of (raw DataFrame with ``space`` as a plain column, encoded
+        feature DataFrame with ``space`` one-hot encoded, list of feature
+        column names). Both DataFrames have identical row order/index and
+        also retain ``time`` and ``headcount``.
 
     Raises:
         KeyError: If ``grid`` is missing ``time``, ``space`` or ``headcount``.
@@ -116,4 +117,4 @@ def build_features(
         + [f"headcount_lag{l}" for l in lags]
         + space_cols
     )
-    return encoded, feature_cols
+    return df, encoded, feature_cols
