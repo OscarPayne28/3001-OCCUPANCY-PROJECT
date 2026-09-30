@@ -58,3 +58,18 @@ def flatten_env_chunk(chunk: pd.DataFrame, problems: Counter | None = None) -> p
     out["time"] = pd.to_datetime(out["time"], unit="s", utc=True)
     out["value"] = out["value"].astype("float32")
     return out
+
+def load_locations(path: str) -> pd.DataFrame:
+    """Load the sensor-locations spreadsheet.
+
+    Args:
+        path: Path to the Excel file (ENV sheet).
+
+    Returns:
+        DataFrame with one row per sensor. The ``ID`` column is kept as text
+        to avoid it being read as a number.
+
+    Raises:
+        FileNotFoundError: If the file does not exist.
+    """
+    return pd.read_excel(path, dtype={"ID": str})

@@ -3,7 +3,7 @@ from collections import Counter
 import pandas as pd
 import pytest
 
-from occupancy.loading import flatten_env_chunk
+from occupancy.loading import flatten_env_chunk, load_locations
 
 GOOD = (
     '[{"values": [{"time": 1702273965, "value": 603}],'
@@ -40,3 +40,12 @@ def test_reading_missing_value_is_skipped_but_row_is_kept():
     out = flatten_env_chunk(chunk, problems)
     assert list(out["variable"]) == ["Carbon dioxide"]
     assert problems["reading missing time/value: Formaldehyde"] == 1
+
+def test_load_locations_keeps_id_as_string(tmp_path):
+    df = pd.DataFrame({"ID": [6012003000486, 6012003000882], "Area": ["Corridor", "Breakout"]})
+    path = tmp_path / "locations.xlsx"
+    df.to_excel(path, index=False)
+
+    out = load_locations(str(path))
+    assert out["ID"].apply(type).eq(str).all()
+    assert out["ID"].iloc[0] == "6012003000486"

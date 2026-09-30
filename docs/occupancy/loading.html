@@ -33,6 +33,9 @@
             <li>
                     <a class="function" href="#flatten_env_chunk">flatten_env_chunk</a>
             </li>
+            <li>
+                    <a class="function" href="#load_locations">load_locations</a>
+            </li>
     </ul>
 
 
@@ -114,6 +117,21 @@
 </span><span id="L-58"><a href="#L-58"><span class="linenos">58</span></a>    <span class="n">out</span><span class="p">[</span><span class="s2">"time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">out</span><span class="p">[</span><span class="s2">"time"</span><span class="p">],</span> <span class="n">unit</span><span class="o">=</span><span class="s2">"s"</span><span class="p">,</span> <span class="n">utc</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 </span><span id="L-59"><a href="#L-59"><span class="linenos">59</span></a>    <span class="n">out</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span> <span class="o">=</span> <span class="n">out</span><span class="p">[</span><span class="s2">"value"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">"float32"</span><span class="p">)</span>
 </span><span id="L-60"><a href="#L-60"><span class="linenos">60</span></a>    <span class="k">return</span> <span class="n">out</span>
+</span><span id="L-61"><a href="#L-61"><span class="linenos">61</span></a>
+</span><span id="L-62"><a href="#L-62"><span class="linenos">62</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_locations</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="L-63"><a href="#L-63"><span class="linenos">63</span></a><span class="w">    </span><span class="sd">"""Load the sensor-locations spreadsheet.</span>
+</span><span id="L-64"><a href="#L-64"><span class="linenos">64</span></a>
+</span><span id="L-65"><a href="#L-65"><span class="linenos">65</span></a><span class="sd">    Args:</span>
+</span><span id="L-66"><a href="#L-66"><span class="linenos">66</span></a><span class="sd">        path: Path to the Excel file (ENV sheet).</span>
+</span><span id="L-67"><a href="#L-67"><span class="linenos">67</span></a>
+</span><span id="L-68"><a href="#L-68"><span class="linenos">68</span></a><span class="sd">    Returns:</span>
+</span><span id="L-69"><a href="#L-69"><span class="linenos">69</span></a><span class="sd">        DataFrame with one row per sensor. The ``ID`` column is kept as text</span>
+</span><span id="L-70"><a href="#L-70"><span class="linenos">70</span></a><span class="sd">        to avoid it being read as a number.</span>
+</span><span id="L-71"><a href="#L-71"><span class="linenos">71</span></a>
+</span><span id="L-72"><a href="#L-72"><span class="linenos">72</span></a><span class="sd">    Raises:</span>
+</span><span id="L-73"><a href="#L-73"><span class="linenos">73</span></a><span class="sd">        FileNotFoundError: If the file does not exist.</span>
+</span><span id="L-74"><a href="#L-74"><span class="linenos">74</span></a><span class="sd">    """</span>
+</span><span id="L-75"><a href="#L-75"><span class="linenos">75</span></a>    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
 </span></pre></div>
 
 
@@ -200,6 +218,49 @@
 
 <p>Warns:
     UserWarning: If <code>problems</code> is None and anything had to be skipped.</p>
+</div>
+
+
+                </section>
+                <section id="load_locations">
+                            <input id="load_locations-view-source" class="view-source-toggle-state" type="checkbox" aria-hidden="true" tabindex="-1">
+<div class="attr function">
+            
+        <span class="def">def</span>
+        <span class="name">load_locations</span><span class="signature pdoc-code condensed">(<span class="param"><span class="n">path</span><span class="p">:</span> <span class="nb">str</span></span><span class="return-annotation">) -> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span>:</span></span>
+
+                <label class="view-source-button" for="load_locations-view-source"><span>View Source</span></label>
+
+    </div>
+    <a class="headerlink" href="#load_locations"></a>
+            <div class="pdoc-code codehilite"><pre><span></span><span id="load_locations-63"><a href="#load_locations-63"><span class="linenos">63</span></a><span class="k">def</span><span class="w"> </span><span class="nf">load_locations</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+</span><span id="load_locations-64"><a href="#load_locations-64"><span class="linenos">64</span></a><span class="w">    </span><span class="sd">"""Load the sensor-locations spreadsheet.</span>
+</span><span id="load_locations-65"><a href="#load_locations-65"><span class="linenos">65</span></a>
+</span><span id="load_locations-66"><a href="#load_locations-66"><span class="linenos">66</span></a><span class="sd">    Args:</span>
+</span><span id="load_locations-67"><a href="#load_locations-67"><span class="linenos">67</span></a><span class="sd">        path: Path to the Excel file (ENV sheet).</span>
+</span><span id="load_locations-68"><a href="#load_locations-68"><span class="linenos">68</span></a>
+</span><span id="load_locations-69"><a href="#load_locations-69"><span class="linenos">69</span></a><span class="sd">    Returns:</span>
+</span><span id="load_locations-70"><a href="#load_locations-70"><span class="linenos">70</span></a><span class="sd">        DataFrame with one row per sensor. The ``ID`` column is kept as text</span>
+</span><span id="load_locations-71"><a href="#load_locations-71"><span class="linenos">71</span></a><span class="sd">        to avoid it being read as a number.</span>
+</span><span id="load_locations-72"><a href="#load_locations-72"><span class="linenos">72</span></a>
+</span><span id="load_locations-73"><a href="#load_locations-73"><span class="linenos">73</span></a><span class="sd">    Raises:</span>
+</span><span id="load_locations-74"><a href="#load_locations-74"><span class="linenos">74</span></a><span class="sd">        FileNotFoundError: If the file does not exist.</span>
+</span><span id="load_locations-75"><a href="#load_locations-75"><span class="linenos">75</span></a><span class="sd">    """</span>
+</span><span id="load_locations-76"><a href="#load_locations-76"><span class="linenos">76</span></a>    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">read_excel</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">{</span><span class="s2">"ID"</span><span class="p">:</span> <span class="nb">str</span><span class="p">})</span>
+</span></pre></div>
+
+
+            <div class="docstring"><p>Load the sensor-locations spreadsheet.</p>
+
+<p>Args:
+    path: Path to the Excel file (ENV sheet).</p>
+
+<p>Returns:
+    DataFrame with one row per sensor. The <code>ID</code> column is kept as text
+    to avoid it being read as a number.</p>
+
+<p>Raises:
+    FileNotFoundError: If the file does not exist.</p>
 </div>
 
 
