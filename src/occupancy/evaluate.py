@@ -1,21 +1,64 @@
 """Model comparison utilities for occupancy forecasting."""
+from typing import NamedTuple
+
 import pandas as pd
 from sklearn.metrics import mean_absolute_error
 
 
-def time_split(df: pd.DataFrame, time_col: str = "time", train_frac: float = 0.8):
-    """Split a DataFrame into train/test by time, preserving chronological order.
+class ForecastSplit(NamedTuple):
+    """Features, shifted target and chronological split for one forecast horizon.
+
+    Attributes:
+        X: Feature rows that have a known future target.
+        y: Headcount ``horizon_bins`` ahead of each row of ``X``.
+        is_train: True for rows before the time cutoff.
+        current: Headcount at each row's own time (the persistence forecast).
+        cutoff: Timestamp separating training from test rows.
+    """
+
+    X: pd.DataFrame
+    y: pd.Series
+    is_train: pd.Series
+    current: pd.Series
+    cutoff: pd.Timestamp
+
+
+def forecast_split(
+    raw: pd.DataFrame,
+    encoded: pd.DataFrame,
+    feature_cols: list[str],
+    horizon_bins: int,
+    train_frac: float = 0.8,
+) -> ForecastSplit:
+    """Build the shifted target and chronological train/test split for one horizon.
+
+    The target is shifted within each space, so a row is never paired with
+    another space's future. Rows without a known future value are dropped.
+    This is the single place that defines the split, used by both tuning and
+    evaluation so the two cannot disagree.
 
     Args:
-        df: DataFrame with a timestamp column.
-        time_col: Name of that column.
-        train_frac: Fraction of the time range assigned to training.
+        raw: Unencoded DataFrame with ``space`` and ``headcount``, sorted by
+            time within each space, with the same index as ``encoded``.
+        encoded: Feature DataFrame with a ``time`` column.
+        feature_cols: Feature column names to return in ``X``.
+        horizon_bins: Number of bins ahead to forecast.
+        train_frac: Fraction of the time range used for training.
 
     Returns:
-        (train_df, test_df, cutoff) where ``cutoff`` is the timestamp boundary.
+        A ``ForecastSplit``.
     """
-    cutoff = df[time_col].quantile(train_frac)
-    return df[df[time_col] < cutoff], df[df[time_col] >= cutoff], cutoff
+    target = raw.groupby("space")["headcount"].shift(-horizon_bins)
+    valid = target.notna()
+    t = encoded.loc[valid, "time"]
+    cutoff = t.quantile(train_frac)
+    return ForecastSplit(
+        X=encoded.loc[valid, feature_cols],
+        y=target[valid],
+        is_train=t < cutoff,
+        current=raw.loc[valid, "headcount"],
+        cutoff=cutoff,
+    )
 
 
 def compare_at_horizon(
@@ -41,19 +84,14 @@ def compare_at_horizon(
         Dict with ``n_rows``, ``persistence_MAE``, and one ``{name}_MAE`` key
         per entry in ``models``.
     """
-    target = raw.groupby("space")["headcount"].shift(-horizon_bins)
-    valid = target.notna()
+    s = forecast_split(raw, encoded, feature_cols, horizon_bins, train_frac)
 
-    X = encoded.loc[valid, feature_cols]
-    y = target[valid]
-    cutoff = encoded.loc[valid, "time"].quantile(train_frac)
-    is_train = encoded.loc[valid, "time"] < cutoff
-
-    result = {"n_rows": int(valid.sum())}
+    result = {"n_rows": len(s.y)}
     result["persistence_MAE"] = mean_absolute_error(
-        y[~is_train], raw.loc[valid, "headcount"][~is_train]
+        s.y[~s.is_train], s.current[~s.is_train]
     )
     for name, model in models.items():
-        model.fit(X[is_train], y[is_train])
-        result[f"{name}_MAE"] = mean_absolute_error(y[~is_train], model.predict(X[~is_train]))
+        model.fit(s.X[s.is_train], s.y[s.is_train])
+        predictions = model.predict(s.X[~s.is_train])
+        result[f"{name}_MAE"] = mean_absolute_error(s.y[~s.is_train], predictions)
     return result

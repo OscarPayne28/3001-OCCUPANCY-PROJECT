@@ -4,6 +4,11 @@ from collections import Counter
 
 import pandas as pd
 
+from pathlib import Path
+
+import pyarrow as pa
+import pyarrow.parquet as pq
+
 
 def flatten_env_chunk(chunk: pd.DataFrame, problems: Counter | None = None) -> pd.DataFrame:
     """Flatten environmental-sensor batch messages into one row per reading.
@@ -73,3 +78,52 @@ def load_locations(path: str) -> pd.DataFrame:
         FileNotFoundError: If the file does not exist.
     """
     return pd.read_excel(path, dtype={"ID": str})
+
+REQUIRED_OCC_COLUMNS = {
+    "id", "floorspaceid", "headcount", "collecteddate", "occupancystatuschangedate",
+}
+
+
+def convert_occupancy_csv(src, out_path, chunksize: int = 500_000) -> int:
+    """Convert the raw occupancy CSV (or a single-file zip of it) to Parquet.
+
+    Reads in chunks so the 9-million-row file never has to fit in memory.
+    Timestamps are parsed to UTC, because the source mixes +10 and +11
+    offsets across daylight saving.
+
+    Args:
+        src: Path to the CSV, or to a zip containing exactly one CSV.
+        out_path: Where to write the Parquet file. Parent folders are created.
+        chunksize: Rows read per chunk.
+
+    Returns:
+        The number of rows written.
+
+    Raises:
+        ValueError: If required columns are missing or the file has no rows.
+    """
+    out_path = Path(out_path)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+
+    writer, n_rows = None, 0
+    try:
+        for chunk in pd.read_csv(src, chunksize=chunksize, dtype={"headcount": "int16"}):
+            missing = REQUIRED_OCC_COLUMNS - set(chunk.columns)
+            if missing:
+                raise ValueError(f"occupancy file is missing columns: {sorted(missing)}")
+            chunk["collecteddate"] = pd.to_datetime(chunk["collecteddate"], utc=True)
+            chunk["occupancystatuschangedate"] = pd.to_datetime(
+                chunk["occupancystatuschangedate"], utc=True
+            )
+            table = pa.Table.from_pandas(chunk, preserve_index=False)
+            if writer is None:
+                writer = pq.ParquetWriter(str(out_path), table.schema)
+            writer.write_table(table)
+            n_rows += len(chunk)
+    finally:
+        if writer is not None:
+            writer.close()
+
+    if n_rows == 0:
+        raise ValueError("occupancy file contains no rows")
+    return n_rows

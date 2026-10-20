@@ -3,6 +3,8 @@ from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import GridSearchCV, TimeSeriesSplit
 from sklearn.tree import DecisionTreeRegressor
 
+from occupancy.evaluate import forecast_split
+
 
 def make_models(tree_params: dict) -> dict:
     """Create the unfitted models compared in the evaluation.
@@ -24,9 +26,9 @@ def make_models(tree_params: dict) -> dict:
 def training_rows(raw, encoded, feature_cols, horizon_bins, train_frac=0.8):
     """Return training features and the shifted target, in chronological order.
 
-    The target is the headcount ``horizon_bins`` ahead of each row, so no
-    feature can contain it. Only rows before the time cutoff are returned,
-    so the test period is never used.
+    Uses ``forecast_split`` so it shares the exact split used for evaluation.
+    Only rows before the time cutoff are returned, so the test period is
+    never used for tuning.
 
     Args:
         raw: Unencoded DataFrame with ``space``, ``time`` and ``headcount``.
@@ -38,14 +40,10 @@ def training_rows(raw, encoded, feature_cols, horizon_bins, train_frac=0.8):
     Returns:
         (X, y, cutoff): features and target sorted by time, and the cutoff timestamp.
     """
-    target = raw.groupby("space")["headcount"].shift(-horizon_bins)
-    valid = target.notna()
-    X = encoded.loc[valid, feature_cols]
-    y = target[valid]
-    t = encoded.loc[valid, "time"]
-    cutoff = t.quantile(train_frac)
-    order = t[t < cutoff].sort_values().index
-    return X.loc[order], y.loc[order], cutoff
+    s = forecast_split(raw, encoded, feature_cols, horizon_bins, train_frac)
+    t = encoded.loc[s.X.index, "time"]
+    order = t[s.is_train].sort_values().index
+    return s.X.loc[order], s.y.loc[order], s.cutoff
 
 
 def tune_tree(raw, encoded, feature_cols, param_grid, horizon_bins, train_frac=0.8, n_splits=5):
