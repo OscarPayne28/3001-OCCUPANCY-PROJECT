@@ -170,13 +170,19 @@
 
             <div class="docstring"><p>Create the unfitted models compared in the evaluation.</p>
 
-<p>Args:
-    tree_params: Keyword arguments for <code>DecisionTreeRegressor</code>
-        (for example <code>max_depth</code> and <code>min_samples_leaf</code>).</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    Dict mapping model name (<code>"tree"</code>, <code>"linear"</code>) to an unfitted
-    scikit-learn estimator.</p>
+<ul>
+<li><strong>tree_params:</strong>  Keyword arguments for <code>DecisionTreeRegressor</code>
+(for example <code>max_depth</code> and <code>min_samples_leaf</code>).</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>Dict mapping model name (<code>"tree"</code>, <code>"linear"</code>) to an unfitted
+  scikit-learn estimator.</p>
+</blockquote>
 </div>
 
 
@@ -222,15 +228,21 @@
 Only rows before the time cutoff are returned, so the test period is
 never used for tuning.</p>
 
-<p>Args:
-    raw: Unencoded DataFrame with <code>space</code>, <code>time</code> and <code>headcount</code>.
-    encoded: Feature DataFrame with the same index as <code>raw</code>.
-    feature_cols: Feature column names.
-    horizon_bins: Number of bins ahead to forecast.
-    train_frac: Fraction of the time range used for training.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    (X, y, cutoff): features and target sorted by time, and the cutoff timestamp.</p>
+<ul>
+<li><strong>raw:</strong>  Unencoded DataFrame with <code>space</code>, <code>time</code> and <code>headcount</code>.</li>
+<li><strong>encoded:</strong>  Feature DataFrame with the same index as <code>raw</code>.</li>
+<li><strong>feature_cols:</strong>  Feature column names.</li>
+<li><strong>horizon_bins:</strong>  Number of bins ahead to forecast.</li>
+<li><strong>train_frac:</strong>  Fraction of the time range used for training.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>(X, y, cutoff): features and target sorted by time, and the cutoff timestamp.</p>
+</blockquote>
 </div>
 
 
@@ -276,17 +288,23 @@ never used for tuning.</p>
 
             <div class="docstring"><p>Grid-search decision-tree settings with chronological cross-validation.</p>
 
-<p>Args:
-    raw: Unencoded DataFrame (see <code><a href="#training_rows">training_rows</a></code>).
-    encoded: Feature DataFrame (see <code><a href="#training_rows">training_rows</a></code>).
-    feature_cols: Feature column names.
-    param_grid: Dict of <code>DecisionTreeRegressor</code> settings to search.
-    horizon_bins: Forecast horizon to tune at, in bins.
-    train_frac: Fraction of the time range used for training.
-    n_splits: Number of <code>TimeSeriesSplit</code> folds.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    The fitted <code>GridSearchCV</code> object. <code>best_params_</code> holds the chosen settings.</p>
+<ul>
+<li><strong>raw:</strong>  Unencoded DataFrame (see <code><a href="#training_rows">training_rows</a></code>).</li>
+<li><strong>encoded:</strong>  Feature DataFrame (see <code><a href="#training_rows">training_rows</a></code>).</li>
+<li><strong>feature_cols:</strong>  Feature column names.</li>
+<li><strong>param_grid:</strong>  Dict of <code>DecisionTreeRegressor</code> settings to search.</li>
+<li><strong>horizon_bins:</strong>  Forecast horizon to tune at, in bins.</li>
+<li><strong>train_frac:</strong>  Fraction of the time range used for training.</li>
+<li><strong>n_splits:</strong>  Number of <code>TimeSeriesSplit</code> folds.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>The fitted <code>GridSearchCV</code> object. <code>best_params_</code> holds the chosen settings.</p>
+</blockquote>
 </div>
 
 

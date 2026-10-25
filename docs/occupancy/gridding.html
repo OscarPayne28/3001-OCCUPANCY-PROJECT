@@ -217,19 +217,28 @@
 fully between the first and last event are returned, so nothing is
 extrapolated beyond the recorded data.</p>
 
-<p>Args:
-    times: Timezone-aware event timestamps, sorted ascending. Ties are
-        allowed; the later row wins.
-    values: Array-like of the signal after each event (same length as <code>times</code>).
-    freq: Bin width as a pandas offset string, such as <code>"15min"</code>.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    Series indexed by bin start (UTC), holding the mean of the signal
-    over each bin.</p>
+<ul>
+<li><strong>times:</strong>  Timezone-aware event timestamps, sorted ascending. Ties are
+allowed; the later row wins.</li>
+<li><strong>values:</strong>  Array-like of the signal after each event (same length as <code>times</code>).</li>
+<li><strong>freq:</strong>  Bin width as a pandas offset string, such as <code>"15min"</code>.</li>
+</ul>
 
-<p>Raises:
-    ValueError: If <code>times</code> and <code>values</code> differ in length or have fewer
-        than two events.</p>
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>Series indexed by bin start (UTC), holding the mean of the signal
+  over each bin.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If <code>times</code> and <code>values</code> differ in length or have fewer
+than two events.</li>
+</ul>
 </div>
 
 
@@ -291,18 +300,27 @@ extrapolated beyond the recorded data.</p>
 <p>For each bin, finds the time since the most recent event at or before the
 bin's end, and marks the bin unreliable if that gap exceeds <code>max_gap_hours</code>.</p>
 
-<p>Args:
-    times: Timezone-aware event timestamps, sorted ascending.
-    freq: Bin width, matching what was passed to <code><a href="#step_function_to_grid">step_function_to_grid</a></code>.
-    max_gap_hours: Bins held from an event more than this many hours stale
-        are flagged.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    Boolean Series indexed by bin start (UTC), True where the bin should
-    be treated as missing (too stale to trust).</p>
+<ul>
+<li><strong>times:</strong>  Timezone-aware event timestamps, sorted ascending.</li>
+<li><strong>freq:</strong>  Bin width, matching what was passed to <code><a href="#step_function_to_grid">step_function_to_grid</a></code>.</li>
+<li><strong>max_gap_hours:</strong>  Bins held from an event more than this many hours stale
+are flagged.</li>
+</ul>
 
-<p>Raises:
-    ValueError: If <code>times</code> has fewer than two events.</p>
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>Boolean Series indexed by bin start (UTC), True where the bin should
+  be treated as missing (too stale to trust).</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If <code>times</code> has fewer than two events.</li>
+</ul>
 </div>
 
 

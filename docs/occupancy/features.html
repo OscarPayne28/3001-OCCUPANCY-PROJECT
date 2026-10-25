@@ -229,18 +229,27 @@
 
             <div class="docstring"><p>Add calendar features derived from a UTC timestamp column.</p>
 
-<p>Args:
-    df: DataFrame containing a timezone-aware UTC timestamp column.
-    time_col: Name of that column.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    A copy of <code>df</code> with added columns: <code>local_hour</code> (0-24, fractional),
-    <code>dow</code> (0=Monday ... 6=Sunday), <code>is_weekend</code> (bool), and cyclic
-    encodings <code>hour_sin</code>/<code>hour_cos</code> so the model sees hour 23 and
-    hour 0 as close together.</p>
+<ul>
+<li><strong>df:</strong>  DataFrame containing a timezone-aware UTC timestamp column.</li>
+<li><strong>time_col:</strong>  Name of that column.</li>
+</ul>
 
-<p>Raises:
-    KeyError: If <code>time_col</code> is not in <code>df</code>.</p>
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>A copy of <code>df</code> with added columns: <code>local_hour</code> (0-24, fractional),
+  <code>dow</code> (0=Monday ... 6=Sunday), <code>is_weekend</code> (bool), and cyclic
+  encodings <code>hour_sin</code>/<code>hour_cos</code> so the model sees hour 23 and
+  hour 0 as close together.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>KeyError:</strong>  If <code>time_col</code> is not in <code>df</code>.</li>
+</ul>
 </div>
 
 
@@ -287,16 +296,22 @@
 <p>Rows must already be sorted by time within each group before calling
 this function, since it shifts by row position, not by timestamp.</p>
 
-<p>Args:
-    df: DataFrame sorted by time within each group.
-    group_col: Column identifying each independent series (e.g. space).
-    value_col: Column to lag.
-    lags: Lag lengths in rows. For a 15-minute grid, [1, 4, 96] gives
-        15 minutes, 1 hour and 1 day of lookback.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    A copy of <code>df</code> with one new column per lag, named
-    <code>{value_col}_lag{n}</code>. The first <code>n</code> rows of each group are NaN.</p>
+<ul>
+<li><strong>df:</strong>  DataFrame sorted by time within each group.</li>
+<li><strong>group_col:</strong>  Column identifying each independent series (e.g. space).</li>
+<li><strong>value_col:</strong>  Column to lag.</li>
+<li><strong>lags:</strong>  Lag lengths in rows. For a 15-minute grid, [1, 4, 96] gives
+15 minutes, 1 hour and 1 day of lookback.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>A copy of <code>df</code> with one new column per lag, named
+  <code>{value_col}_lag{n}</code>. The first <code>n</code> rows of each group are NaN.</p>
+</blockquote>
 </div>
 
 
@@ -339,12 +354,18 @@ this function, since it shifts by row position, not by timestamp.</p>
 <p>This is an approximation (20 Dec to 10 Jan each year), not confirmed
 closure dates, since none were provided with the dataset.</p>
 
-<p>Args:
-    df: DataFrame with a timezone-aware timestamp column.
-    time_col: Name of that column.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    A copy of <code>df</code> with an added boolean column <code>likely_closure</code>.</p>
+<ul>
+<li><strong>df:</strong>  DataFrame with a timezone-aware timestamp column.</li>
+<li><strong>time_col:</strong>  Name of that column.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>A copy of <code>df</code> with an added boolean column <code>likely_closure</code>.</p>
+</blockquote>
 </div>
 
 
@@ -414,21 +435,30 @@ closure dates, since none were provided with the dataset.</p>
 one-hot encodes <code>space</code>, and drops rows with any missing feature
 (e.g. the first lags*bin_width of each space's history).</p>
 
-<p>Args:
-    grid: DataFrame with columns <code>time</code> (UTC, tz-aware), <code>space</code>
-        (categorical label) and <code>headcount</code>, one row per space per bin,
-        as produced by gridding each space with <code>step_function_to_grid</code>.
-    lags: Lag lengths in rows to compute via <code><a href="#add_lag_features">add_lag_features</a></code>.
-    roll_window: Window size (in rows) for the rolling mean of headcount.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    A tuple of (raw DataFrame with <code>space</code> as a plain column, encoded
-    feature DataFrame with <code>space</code> one-hot encoded, list of feature
-    column names). Both DataFrames have identical row order/index and
-    also retain <code>time</code> and <code>headcount</code>.</p>
+<ul>
+<li><strong>grid:</strong>  DataFrame with columns <code>time</code> (UTC, tz-aware), <code>space</code>
+(categorical label) and <code>headcount</code>, one row per space per bin,
+as produced by gridding each space with <code>step_function_to_grid</code>.</li>
+<li><strong>lags:</strong>  Lag lengths in rows to compute via <code><a href="#add_lag_features">add_lag_features</a></code>.</li>
+<li><strong>roll_window:</strong>  Window size (in rows) for the rolling mean of headcount.</li>
+</ul>
 
-<p>Raises:
-    KeyError: If <code>grid</code> is missing <code>time</code>, <code>space</code> or <code>headcount</code>.</p>
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>A tuple of (raw DataFrame with <code>space</code> as a plain column, encoded
+  feature DataFrame with <code>space</code> one-hot encoded, list of feature
+  column names). Both DataFrames have identical row order/index and
+  also retain <code>time</code> and <code>headcount</code>.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>KeyError:</strong>  If <code>grid</code> is missing <code>time</code>, <code>space</code> or <code>headcount</code>.</li>
+</ul>
 </div>
 
 

@@ -265,19 +265,28 @@
 
             <div class="docstring"><p>Flatten environmental-sensor batch messages into one row per reading.</p>
 
-<p>Args:
-    chunk: DataFrame with columns <code>sensorid</code> and <code>jsondata</code>, where
-        <code>jsondata</code> is a JSON list of <code>{"values": [...], "variable": {...}}</code>.
-    problems: Optional Counter. If given, counts of skipped items are added
-        to it (keyed by problem type) and no warning is raised, so counts
-        can be accumulated across many chunks.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    DataFrame with columns <code>sensorid</code> (str), <code>time</code> (UTC datetime),
-    <code>variable</code> (str), <code>unit</code> (str) and <code>value</code> (float32).</p>
+<ul>
+<li><strong>chunk:</strong>  DataFrame with columns <code>sensorid</code> and <code>jsondata</code>, where
+<code>jsondata</code> is a JSON list of <code>{"values": [...], "variable": {...}}</code>.</li>
+<li><strong>problems:</strong>  Optional Counter. If given, counts of skipped items are added
+to it (keyed by problem type) and no warning is raised, so counts
+can be accumulated across many chunks.</li>
+</ul>
 
-<p>Warns:
-    UserWarning: If <code>problems</code> is None and anything had to be skipped.</p>
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>DataFrame with columns <code>sensorid</code> (str), <code>time</code> (UTC datetime),
+  <code>variable</code> (str), <code>unit</code> (str) and <code>value</code> (float32).</p>
+</blockquote>
+
+<h6 id="warns">Warns:</h6>
+
+<blockquote>
+  <p>UserWarning: If <code>problems</code> is None and anything had to be skipped.</p>
+</blockquote>
 </div>
 
 
@@ -312,15 +321,24 @@
 
             <div class="docstring"><p>Load the sensor-locations spreadsheet.</p>
 
-<p>Args:
-    path: Path to the Excel file (ENV sheet).</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    DataFrame with one row per sensor. The <code>ID</code> column is kept as text
-    to avoid it being read as a number.</p>
+<ul>
+<li><strong>path:</strong>  Path to the Excel file (ENV sheet).</li>
+</ul>
 
-<p>Raises:
-    FileNotFoundError: If the file does not exist.</p>
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>DataFrame with one row per sensor. The <code>ID</code> column is kept as text
+  to avoid it being read as a number.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>FileNotFoundError:</strong>  If the file does not exist.</li>
+</ul>
 </div>
 
 
@@ -328,7 +346,7 @@
                 <section id="REQUIRED_OCC_COLUMNS">
                     <div class="attr variable">
             <span class="name">REQUIRED_OCC_COLUMNS</span>        =
-<span class="default_value">{&#39;id&#39;, &#39;headcount&#39;, &#39;collecteddate&#39;, &#39;floorspaceid&#39;, &#39;occupancystatuschangedate&#39;}</span>
+<span class="default_value">{&#39;floorspaceid&#39;, &#39;id&#39;, &#39;headcount&#39;, &#39;collecteddate&#39;, &#39;occupancystatuschangedate&#39;}</span>
 
         
     </div>
@@ -400,16 +418,25 @@
 Timestamps are parsed to UTC, because the source mixes +10 and +11
 offsets across daylight saving.</p>
 
-<p>Args:
-    src: Path to the CSV, or to a zip containing exactly one CSV.
-    out_path: Where to write the Parquet file. Parent folders are created.
-    chunksize: Rows read per chunk.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    The number of rows written.</p>
+<ul>
+<li><strong>src:</strong>  Path to the CSV, or to a zip containing exactly one CSV.</li>
+<li><strong>out_path:</strong>  Where to write the Parquet file. Parent folders are created.</li>
+<li><strong>chunksize:</strong>  Rows read per chunk.</li>
+</ul>
 
-<p>Raises:
-    ValueError: If required columns are missing or the file has no rows.</p>
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>The number of rows written.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If required columns are missing or the file has no rows.</li>
+</ul>
 </div>
 
 

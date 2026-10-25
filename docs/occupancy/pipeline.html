@@ -326,17 +326,26 @@ linear regression at four horizons. Results are written to <code>results/</code>
 are labelled by the first 8 characters of their <code>floorspaceid</code>, because
 the room mapping is unreliable (see DATA_ISSUES.md).</p>
 
-<p>Args:
-    occ: Event log with columns <code>id</code>, <code>floorspaceid</code>, <code>collecteddate</code>
-        (UTC, timezone-aware) and <code>headcount</code>.
-    freq: Bin width, such as <code>"15min"</code>.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    DataFrame with columns <code>time</code> (bin start, UTC), <code>headcount</code>
-    (time-weighted mean) and <code>space</code>.</p>
+<ul>
+<li><strong>occ:</strong>  Event log with columns <code>id</code>, <code>floorspaceid</code>, <code>collecteddate</code>
+(UTC, timezone-aware) and <code>headcount</code>.</li>
+<li><strong>freq:</strong>  Bin width, such as <code>"15min"</code>.</li>
+</ul>
 
-<p>Raises:
-    ValueError: If a required column is missing.</p>
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>DataFrame with columns <code>time</code> (bin start, UTC), <code>headcount</code>
+  (time-weighted mean) and <code>space</code>.</p>
+</blockquote>
+
+<h6 id="raises">Raises:</h6>
+
+<ul>
+<li><strong>ValueError:</strong>  If a required column is missing.</li>
+</ul>
 </div>
 
 
@@ -393,17 +402,23 @@ the room mapping is unreliable (see DATA_ISSUES.md).</p>
 
             <div class="docstring"><p>Build features, tune the tree, and compare models at each horizon.</p>
 
-<p>Args:
-    grid: Gridded occupancy (output of <code><a href="#grid_occupancy">grid_occupancy</a></code>).
-    lags: Lag lengths in bins. Defaults to <code><a href="#DEFAULT_LAGS">DEFAULT_LAGS</a></code>.
-    param_grid: Decision-tree settings to search. Defaults to <code><a href="#DEFAULT_PARAM_GRID">DEFAULT_PARAM_GRID</a></code>.
-    horizons: Mapping of label to horizon in bins. Defaults to <code><a href="#DEFAULT_HORIZONS">DEFAULT_HORIZONS</a></code>.
-    tune_horizon_bins: Horizon (in bins) at which the tree is tuned.
-    train_frac: Fraction of the time range used for training.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    (results, best_params): a DataFrame with one row per horizon and the
-    MAE of each method, and the tuned decision-tree settings.</p>
+<ul>
+<li><strong>grid:</strong>  Gridded occupancy (output of <code><a href="#grid_occupancy">grid_occupancy</a></code>).</li>
+<li><strong>lags:</strong>  Lag lengths in bins. Defaults to <code><a href="#DEFAULT_LAGS">DEFAULT_LAGS</a></code>.</li>
+<li><strong>param_grid:</strong>  Decision-tree settings to search. Defaults to <code><a href="#DEFAULT_PARAM_GRID">DEFAULT_PARAM_GRID</a></code>.</li>
+<li><strong>horizons:</strong>  Mapping of label to horizon in bins. Defaults to <code><a href="#DEFAULT_HORIZONS">DEFAULT_HORIZONS</a></code>.</li>
+<li><strong>tune_horizon_bins:</strong>  Horizon (in bins) at which the tree is tuned.</li>
+<li><strong>train_frac:</strong>  Fraction of the time range used for training.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>(results, best_params): a DataFrame with one row per horizon and the
+  MAE of each method, and the tuned decision-tree settings.</p>
+</blockquote>
 </div>
 
 
@@ -449,14 +464,20 @@ the room mapping is unreliable (see DATA_ISSUES.md).</p>
 
             <div class="docstring"><p>Run the full pipeline from the raw occupancy file to the results table.</p>
 
-<p>Args:
-    source: Raw occupancy CSV, or a zip containing exactly one CSV.
-    processed_dir: Where intermediate Parquet files are written (not tracked by git).
-    results_dir: Where <code>results.csv</code> and <code>best_params.json</code> are written.
-    freq: Grid bin width.</p>
+<h6 id="arguments">Arguments:</h6>
 
-<p>Returns:
-    (results, best_params) as returned by <code><a href="#run_comparison">run_comparison</a></code>.</p>
+<ul>
+<li><strong>source:</strong>  Raw occupancy CSV, or a zip containing exactly one CSV.</li>
+<li><strong>processed_dir:</strong>  Where intermediate Parquet files are written (not tracked by git).</li>
+<li><strong>results_dir:</strong>  Where <code>results.csv</code> and <code>best_params.json</code> are written.</li>
+<li><strong>freq:</strong>  Grid bin width.</li>
+</ul>
+
+<h6 id="returns">Returns:</h6>
+
+<blockquote>
+  <p>(results, best_params) as returned by <code><a href="#run_comparison">run_comparison</a></code>.</p>
+</blockquote>
 </div>
 
 
